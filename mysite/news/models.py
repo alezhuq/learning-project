@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 # Create your models here.
@@ -11,10 +12,16 @@ class News(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     photo = models.ImageField(upload_to='photos/%Y/%m/%d', blank="True")
     is_published = models.BooleanField(default=True)
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
+    category = models.ForeignKey('Category', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        context = {
+            "pk": self.pk
+        }
+        return reverse('view_news', kwargs=context)
 
     class Meta(object):
         verbose_name = "news"
@@ -27,6 +34,12 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        context = {
+            "category_id": self.pk
+        }
+        return reverse('category', kwargs=context)
 
     class Meta(object):
         verbose_name = 'category'

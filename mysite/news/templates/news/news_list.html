@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+  {{block.super}}
+{% endblock %}
+
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+  <div class="col md=9">
+        {% for item in object_list %}
+        <div class="card mb=10 mt=10">
+          <div class="card-header">
+            Category : <a href="{{item.category.get_absolute_url}}">{{item.category}} </a>
+
+          <div class="card-body">
+            <div class="media">
+              {% if item.photo %}
+              <img src="{{ item.photo.url }}" alt="" width="350" class="mr-3">
+              {% endif %}
+              <div class="media-body">
+                <h5 class="card-title">{{item.title}} </h5>
+                {% autoescape off %}
+                <p class="card-text">{{item.content|truncatewords:50}}</p>
+                {% endautoescape %}
+                <a href="{{item.get_absolute_url}}" class="btn btn-primary">read more</a>
+              </div>
+            </div>
+
+          </div>
+          <div class="card-footer text-muted">
+            {{item.created_at |timesince}}
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+
