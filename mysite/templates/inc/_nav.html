@@ -10,10 +10,16 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Main</a>
           </li>
+          {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'add_news' %}">Add news</a>
           </li>
+          {% endif %}
         </ul>
+        <span class="navbar-text">
+          <a class="nav-link" href="{% url 'register' %}">Register</a>
+          <a class="nav-link" href="{% url 'login' %}">Log in</a>
+        </span>
 
       </div>
     </nav>

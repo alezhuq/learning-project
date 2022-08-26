@@ -12,7 +12,7 @@
 
 {% block content %}
   <div class="col md=9">
-        {% for item in news %}
+        {% for item in page_obj %}
         <div class="card mb=10 mt=10">
           <div class="card-header">
             Category : <a href="{{item.category.get_absolute_url}}">{{item.category}} </a>
@@ -34,6 +34,7 @@
           </div>
         </div>
         {% endfor %}
+
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+  add news
+{% endblock %}
+
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+
+
+{% block content %}
+<div class="col md=9">
+<div class="ml-5">
+<h1>Register</h1>
+</div>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p }}
+    <button type="submit" class="btn btn-primary btn-block">Register</button>
+</form>
+</div>
+{% endblock %}
+

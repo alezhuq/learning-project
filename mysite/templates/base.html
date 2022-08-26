@@ -22,8 +22,48 @@
 
     <div class="container mt-3">
       <div class="row">
+        <div class="container">
         {% block sidebar %}{% endblock %}
-        {% block content %}{% endblock %}
+
+        {% if messages %}
+        {% for message in messages %}
+
+          {% if message.tags == 'error' %}
+          <div class="alert alert-danger" role="alert">
+              {{ message }}
+          </div>
+          {% else %}
+          <div class="alert alert-{{message.tags}}" role="alert">
+              {{ message }}
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+        </div>
+
+
+
+        {% block content %}
+        {% endblock %}
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?p age={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
       </div>
     </div>
 
