@@ -1,6 +1,7 @@
 <!doctype html>
 
 {% load static %}
+{% load cache %}
 
 <html lang="en">
   <head>
@@ -23,7 +24,9 @@
     <div class="container mt-3">
       <div class="row">
         <div class="container">
+
         {% block sidebar %}{% endblock %}
+
 
         {% if messages %}
         {% for message in messages %}

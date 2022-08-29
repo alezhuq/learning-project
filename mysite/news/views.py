@@ -1,13 +1,14 @@
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from .forms import NewsForm, UserRegisterForm
+from .forms import NewsForm, UserRegisterForm, UserLoginForm, ContactForm
 from .models import News, Category
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib import messages
+from django.contrib.auth import login, logout
 
-
-
+from news.tasks import send_mail_task
 
 
 # Create your views here.
@@ -67,22 +68,74 @@ def register(request):
         form = UserRegisterForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            user = form.save()
             messages.success(request, 'Registered succcessfully')
-            return redirect('login')
+            login(request, user)
+            return redirect('home')
         else:
             messages.error(request, "Register error")
     else:
         form = UserRegisterForm()
-    context={
+    context = {
         'form': form
     }
     return render(request, 'news/register.html', context=context)
 
 
-def login(request):
-    return render(request, 'news/login.html')
+def user_login(request):
+    if request.method == "POST":
+        form = UserLoginForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserLoginForm()
 
+    context = {
+        'form': form
+    }
+    return render(request, 'news/login.html', context=context)
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
+
+
+def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        user_email = request.user.email
+        print(user_email)
+        if form.is_valid():
+            mail = send_mail_task.delay(
+                subject=form.cleaned_data['subject'],
+                body=form.cleaned_data['body'],
+                sender='olehk9999@gmail.com',
+                list_of_receivers=['okutryk@gmail.com'],
+            )
+            # mail = send_mail(
+            #     form.cleaned_data['subject'],
+            #     form.cleaned_data['body'],
+            #     'olehk9999@gmail.com',
+            #     ['okutryk@gmail.com'],
+            #     fail_silently=False
+            # )
+            if mail:
+                messages.success(request, 'Email was sent successfully')
+                return redirect('contact')
+            else:
+                messages.error(request, "Error: could not send your message")
+        else:
+            messages.error(request, "Validation error")
+
+    else:
+        form = ContactForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'news/contact.html', context=context)
 
 # def index(request):
 #     news = News.objects.all().select_related('category')
